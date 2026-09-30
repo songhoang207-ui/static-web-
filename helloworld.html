@@ -3,9 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>My Serverless Form</title>
 </head>
 <body>
-    hello world 12312313
+    <h2>Contact Me</h2>
+    
+    <!-- The HTML Form -->
+    <form id="contact-form">
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" required><br><br>
+        
+        <label for="email">Email:</label><br>
+        <input type="email" id="email" required><br><br>
+        
+        <label for="message">Message:</label><br>
+        <textarea id="message" rows="4" required></textarea><br><br>
+        
+        <button type="submit">Submit</button>
+    </form>
+
+    <!-- The JavaScript to connect to AWS -->
+    <script>
+        document.getElementById('contact-form').addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevents the page from reloading when you click submit
+            
+            // REPLACE THIS with your exact API Gateway Invoke URL and ensure it ends with /submit
+            const API_ENDPOINT = 'https://thrl7boy83.execute-api.us-east-1.amazonaws.com/';
+
+            // Gather the data from the form
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                message: document.getElementById('message').value
+            };
+
+            try {
+                // Send the data to your API
+                const response = await fetch(API_ENDPOINT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    alert("Success! Your message was sent to DynamoDB.");
+                    document.getElementById('contact-form').reset(); // Clears the form fields
+                } else {
+                    alert("Error: Something went wrong on the server.");
+                }
+            } catch (error) {
+                alert("Network error: Could not reach the API.");
+            }
+        });
+    </script>
 </body>
 </html>
